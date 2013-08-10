@@ -1,0 +1,231 @@
+
+build/output.elf:     file format elf32-littlearm
+
+
+Disassembly of section .init:
+
+00000000 <_start>:
+   0:	ea002073 	b	81d4 <main>
+
+Disassembly of section .text:
+
+00008000 <InitialiseFrameBuffer>:
+    8000:	e3500a01 	cmp	r0, #4096	; 0x1000
+    8004:	93510a01 	cmpls	r1, #4096	; 0x1000
+    8008:	93520020 	cmpls	r2, #32
+    800c:	83a00000 	movhi	r0, #0
+    8010:	81a0f00e 	movhi	pc, lr
+    8014:	e92d4010 	push	{r4, lr}
+    8018:	e59f4044 	ldr	r4, [pc, #68]	; 8064 <pointerWait$+0x14>
+    801c:	e5840000 	str	r0, [r4]
+    8020:	e5841004 	str	r1, [r4, #4]
+    8024:	e5840008 	str	r0, [r4, #8]
+    8028:	e584100c 	str	r1, [r4, #12]
+    802c:	e5842014 	str	r2, [r4, #20]
+    8030:	e1a00004 	mov	r0, r4
+    8034:	e3a01001 	mov	r1, #1
+    8038:	eb000049 	bl	8164 <MailboxWrite>
+    803c:	e3a00001 	mov	r0, #1
+    8040:	eb000054 	bl	8198 <MailboxRead>
+    8044:	e3300000 	teq	r0, #0
+    8048:	13a00000 	movne	r0, #0
+    804c:	18bd8010 	popne	{r4, pc}
+
+00008050 <pointerWait$>:
+    8050:	e5940020 	ldr	r0, [r4, #32]
+    8054:	e3300000 	teq	r0, #0
+    8058:	0afffffc 	beq	8050 <pointerWait$>
+    805c:	e1a00004 	mov	r0, r4
+    8060:	e8bd8010 	pop	{r4, pc}
+    8064:	00009000 	.word	0x00009000
+
+00008068 <GetGpioAddress>:
+    8068:	e59f008c 	ldr	r0, [pc, #140]	; 80fc <SetGpio+0x3c>
+    806c:	e1a0f00e 	mov	pc, lr
+
+00008070 <SetGpioFunction>:
+    8070:	e3500035 	cmp	r0, #53	; 0x35
+    8074:	93510007 	cmpls	r1, #7
+    8078:	81a0f00e 	movhi	pc, lr
+    807c:	e92d4000 	push	{lr}
+    8080:	e1a02000 	mov	r2, r0
+    8084:	ebfffff7 	bl	8068 <GetGpioAddress>
+
+00008088 <functionLoop$>:
+    8088:	e3520009 	cmp	r2, #9
+    808c:	8242200a 	subhi	r2, r2, #10
+    8090:	82800004 	addhi	r0, r0, #4
+    8094:	8afffffb 	bhi	8088 <functionLoop$>
+    8098:	e0822082 	add	r2, r2, r2, lsl #1
+    809c:	e1a01211 	lsl	r1, r1, r2
+    80a0:	e3a03007 	mov	r3, #7
+    80a4:	e1a03213 	lsl	r3, r3, r2
+    80a8:	e1e03003 	mvn	r3, r3
+    80ac:	e5902000 	ldr	r2, [r0]
+    80b0:	e0022003 	and	r2, r2, r3
+    80b4:	e1811002 	orr	r1, r1, r2
+    80b8:	e5801000 	str	r1, [r0]
+    80bc:	e8bd8000 	pop	{pc}
+
+000080c0 <SetGpio>:
+    80c0:	e3500035 	cmp	r0, #53	; 0x35
+    80c4:	81a0f00e 	movhi	pc, lr
+    80c8:	e92d4000 	push	{lr}
+    80cc:	e1a02000 	mov	r2, r0
+    80d0:	ebffffe4 	bl	8068 <GetGpioAddress>
+    80d4:	e1a032a2 	lsr	r3, r2, #5
+    80d8:	e1a03103 	lsl	r3, r3, #2
+    80dc:	e0800003 	add	r0, r0, r3
+    80e0:	e202201f 	and	r2, r2, #31
+    80e4:	e3a03001 	mov	r3, #1
+    80e8:	e1a03213 	lsl	r3, r3, r2
+    80ec:	e3310000 	teq	r1, #0
+    80f0:	05803028 	streq	r3, [r0, #40]	; 0x28
+    80f4:	1580301c 	strne	r3, [r0, #28]
+    80f8:	e8bd8000 	pop	{pc}
+    80fc:	20200000 	.word	0x20200000
+
+00008100 <graphics_fillRect>:
+    8100:	e5902020 	ldr	r2, [r0, #32]
+    8104:	e3a07b01 	mov	r7, #1024	; 0x400
+    8108:	e0070794 	mul	r7, r4, r7
+    810c:	e0877003 	add	r7, r7, r3
+    8110:	e1a07087 	lsl	r7, r7, #1
+    8114:	e0822007 	add	r2, r2, r7
+    8118:	e3a07000 	mov	r7, #0
+
+0000811c <loopi$>:
+    811c:	e1570006 	cmp	r7, r6
+    8120:	0a00000c 	beq	8158 <next$>
+    8124:	e2877001 	add	r7, r7, #1
+    8128:	e3a08000 	mov	r8, #0
+
+0000812c <loopa$>:
+    812c:	e1580005 	cmp	r8, r5
+    8130:	0a000003 	beq	8144 <endLoopa$>
+    8134:	e2888001 	add	r8, r8, #1
+    8138:	e1c210b0 	strh	r1, [r2]
+    813c:	e2822002 	add	r2, r2, #2
+    8140:	eafffff9 	b	812c <loopa$>
+
+00008144 <endLoopa$>:
+    8144:	e3a09b01 	mov	r9, #1024	; 0x400
+    8148:	e0499006 	sub	r9, r9, r6
+    814c:	e1a09089 	lsl	r9, r9, #1
+    8150:	e0822009 	add	r2, r2, r9
+    8154:	eafffff0 	b	811c <loopi$>
+
+00008158 <next$>:
+    8158:	e1a0f00e 	mov	pc, lr
+
+0000815c <GetMailboxBase>:
+    815c:	e59f006c 	ldr	r0, [pc, #108]	; 81d0 <rightmail$+0x24>
+    8160:	e1a0f00e 	mov	pc, lr
+
+00008164 <MailboxWrite>:
+    8164:	e310000f 	tst	r0, #15
+    8168:	11a0f00e 	movne	pc, lr
+    816c:	e351000f 	cmp	r1, #15
+    8170:	81a0f00e 	movhi	pc, lr
+    8174:	e1a02000 	mov	r2, r0
+    8178:	e92d4000 	push	{lr}
+    817c:	ebfffff6 	bl	815c <GetMailboxBase>
+
+00008180 <wait1$>:
+    8180:	e5903018 	ldr	r3, [r0, #24]
+    8184:	e3130102 	tst	r3, #-2147483648	; 0x80000000
+    8188:	1afffffc 	bne	8180 <wait1$>
+    818c:	e0822001 	add	r2, r2, r1
+    8190:	e5802020 	str	r2, [r0, #32]
+    8194:	e8bd8000 	pop	{pc}
+
+00008198 <MailboxRead>:
+    8198:	e350000f 	cmp	r0, #15
+    819c:	81a0f00e 	movhi	pc, lr
+    81a0:	e1a01000 	mov	r1, r0
+    81a4:	e92d4000 	push	{lr}
+    81a8:	ebffffeb 	bl	815c <GetMailboxBase>
+
+000081ac <rightmail$>:
+    81ac:	e5902018 	ldr	r2, [r0, #24]
+    81b0:	e3120101 	tst	r2, #1073741824	; 0x40000000
+    81b4:	1afffffc 	bne	81ac <rightmail$>
+    81b8:	e5902000 	ldr	r2, [r0]
+    81bc:	e202300f 	and	r3, r2, #15
+    81c0:	e1330001 	teq	r3, r1
+    81c4:	1afffff8 	bne	81ac <rightmail$>
+    81c8:	e3c2000f 	bic	r0, r2, #15
+    81cc:	e8bd8000 	pop	{pc}
+    81d0:	2000b880 	.word	0x2000b880
+
+000081d4 <main>:
+    81d4:	e3a0d902 	mov	sp, #32768	; 0x8000
+    81d8:	e3a00b01 	mov	r0, #1024	; 0x400
+    81dc:	e3a01c03 	mov	r1, #768	; 0x300
+    81e0:	e3a02010 	mov	r2, #16
+    81e4:	ebffff85 	bl	8000 <InitialiseFrameBuffer>
+    81e8:	e3300000 	teq	r0, #0
+    81ec:	1a000006 	bne	820c <noError$>
+    81f0:	e3a00010 	mov	r0, #16
+    81f4:	e3a01001 	mov	r1, #1
+    81f8:	ebffff9c 	bl	8070 <SetGpioFunction>
+    81fc:	e3a00010 	mov	r0, #16
+    8200:	e3a01000 	mov	r1, #0
+    8204:	ebffffad 	bl	80c0 <SetGpio>
+
+00008208 <error$>:
+    8208:	eafffffe 	b	8208 <error$>
+
+0000820c <noError$>:
+    820c:	e5902020 	ldr	r2, [r0, #32]
+    8210:	e3a07007 	mov	r7, #7
+    8214:	e3a080fa 	mov	r8, #250	; 0xfa
+
+00008218 <fillWhite$>:
+    8218:	e59f1038 	ldr	r1, [pc, #56]	; 8258 <endProgram$+0x4>
+    821c:	e3a09007 	mov	r9, #7
+    8220:	e0499007 	sub	r9, r9, r7
+    8224:	e3a03000 	mov	r3, #0
+    8228:	e3a04000 	mov	r4, #0
+    822c:	e3a05014 	mov	r5, #20
+    8230:	e3a06014 	mov	r6, #20
+    8234:	ebffffb1 	bl	8100 <graphics_fillRect>
+
+00008238 <movingOn$>:
+    8238:	e92d0008 	push	{r3}
+    823c:	e59f3014 	ldr	r3, [pc, #20]	; 8258 <endProgram$+0x4>
+
+00008240 <bufferLoop$>:
+    8240:	e2433001 	sub	r3, r3, #1
+    8244:	e3530000 	cmp	r3, #0
+    8248:	1afffffc 	bne	8240 <bufferLoop$>
+    824c:	e8bd0008 	pop	{r3}
+    8250:	eafffff0 	b	8218 <fillWhite$>
+
+00008254 <endProgram$>:
+    8254:	eafffffe 	b	8254 <endProgram$>
+    8258:	0000ffff 	.word	0x0000ffff
+
+0000825c <GetSystemTimerBase>:
+    825c:	e59f0034 	ldr	r0, [pc, #52]	; 8298 <loop$+0x14>
+    8260:	e1a0f00e 	mov	pc, lr
+
+00008264 <GetTimeStamp>:
+    8264:	e92d4000 	push	{lr}
+    8268:	ebfffffb 	bl	825c <GetSystemTimerBase>
+    826c:	e1c000d4 	ldrd	r0, [r0, #4]
+    8270:	e8bd8000 	pop	{pc}
+
+00008274 <Wait>:
+    8274:	e1a02000 	mov	r2, r0
+    8278:	e92d4000 	push	{lr}
+    827c:	ebfffff8 	bl	8264 <GetTimeStamp>
+    8280:	e1a03000 	mov	r3, r0
+
+00008284 <loop$>:
+    8284:	ebfffff6 	bl	8264 <GetTimeStamp>
+    8288:	e0401003 	sub	r1, r0, r3
+    828c:	e1510002 	cmp	r1, r2
+    8290:	9afffffb 	bls	8284 <loop$>
+    8294:	e8bd8000 	pop	{pc}
+    8298:	20003000 	.word	0x20003000
