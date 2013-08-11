@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Michael Lynch. All rights reserved.
 //
 
-/*#include <iostream>
+#include <iostream>
 #include <fstream>
 
-us ing namespace std;*/
+using namespace std;
 
 int main(int argc,const char* argv[]){
     /*ifstream file;
@@ -27,6 +27,12 @@ int main(int argc,const char* argv[]){
     */
     
     //cout << "hello" << endl;
+    
+    
+    cout << "hello" << endl;
+    char input;
+    
+    cin >> input;
     
     return 0;
 }
