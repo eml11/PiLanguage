@@ -5,13 +5,12 @@
 core_arrayAllocate:
   pntr .req r0
   size .req r1
-  NUL .req r4
 
-  str size,[pntr,#0]
+  str size,[pntr]
   mv r2,#1
 
   loopi$:
-    str NUL,[pntr,r2]
+    str #0,[pntr,r2]
     add r2,#1
     cmp r2,size
     beq next$
@@ -19,7 +18,6 @@ core_arrayAllocate:
   next$:
   .unreq pntr
   .unreq size
-  .unreq NUL
   mov pc,lr
 
 core_arraySetattr:
@@ -50,22 +48,25 @@ core_arraySetslice:
   pntr .req r0
   startindex .req r1
   endindex .req r2
-  mov r3,lr
-  str r4,!memory location
+  sourcepntr .req r3
+  push {r4,r5,lr}  
 
   cmp endindex,[pntr]
   blls setslice
   .unreq pntr
   .unreq startrindex
   .unreq endindex
-  ldr ,r4 !from memory location
-  mov pc,r3
+  .unreq sourcepntr
+  pop {r4,r5,pc}
 
 setslice:
+  currentindex .req r5
+  mov currentindex,#1
   loopi$:
-    pop {r4}
+    ldr r4,[sourcepntr,currentindex]
     str r4,[pntr,startindex]
     add startindex,#1
+    add currentindex,#1
     cmp startindex,endindex
     beq next$
     b loopi$
@@ -76,22 +77,33 @@ core_arrayGetslice:
   pntr .req r0
   startindex .req r1
   endindex .req r2
-  mov r3,lr
-  str r4,!memory location
+  resultpntr .req r3
+  push {r4,r5,lr}
 
   cmp endindex,[pntr]
   blls getslice
   .unreq pntr
   .unreq startrindex
   .unreq endindex
-  ldr ,r4 !from memory location
-  mov pc,r3
+  .unreq resultpntr
+  pop {r4,r5,pc}
 
 getslice:
+  mov r4,pntr
+  mov r5,startindex
+  mov r0,resultpntr
+  mov r1,endindex
+  sub r1,r5
+  bl core_arrayAllocate
+  mov pntr,r4
+  mov startindex,r5
+  currentindex .req r5
+  mov currentindex,#1
   loopi$:
     ldr r4,[pntr,startindex]
-    push {r4}
+    str r4,[resultpntr,currentindex]
     add startindex,#1
+    add currentindex,#1
     cmp startindex,endindex
     beq next$
     b loopi$
