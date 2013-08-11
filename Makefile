@@ -2,8 +2,8 @@ CC=g++
 MAIN=$PWD
 BIN=$MAIN
 
-all:main
+all:PiMain
 
-main:main.cpp
-	$(CC) -o $BIN/main main.cpp
+PiMain:main.cpp
+	$(CC) -o $BIN/PiMain main.cpp
 	PATH=$PATH:$BIN
